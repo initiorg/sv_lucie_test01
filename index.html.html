@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L-Efekty</title>
+    <style>
+        /* Základní nastavení stránky */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0f172a; /* Tmavě modro-šedé pozadí */
+            overflow: hidden; /* Zabránění scrollbarům při efektech na kraji */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            cursor: crosshair;
+            user-select: none; /* Zamezení označování textu při klikání */
+        }
+
+        /* Třída pro animaci kruhu (ripple) */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid currentColor;
+            box-shadow: 0 0 20px currentColor, inset 0 0 20px currentColor;
+            pointer-events: none; /* Kliknutí projde skrz animaci dál */
+            transform: translate(-50%, -50%);
+            animation: rippleAnim 1s ease-out forwards;
+        }
+
+        /* Třída pro animaci slova */
+        .word {
+            position: absolute;
+            font-weight: 800;
+            font-size: 24px;
+            text-shadow: 0 0 15px currentColor;
+            pointer-events: none;
+            transform-origin: center center;
+            animation: wordAnim 1s ease-out forwards;
+        }
+
+        /* Klíčové snímky pro kruh: od nuly do 300px, zmizí */
+        @keyframes rippleAnim {
+            0% {
+                width: 0px;
+                height: 0px;
+                opacity: 1;
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+
+        /* Klíčové snímky pro slovo: zvětší se a zmizí */
+        @keyframes wordAnim {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(3);
+            }
+        }
+        
+        /* Malá nápověda pro uživatele v rohu */
+        .hint {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hint">Klikni kamkoliv na obrazovku...</div>
+
+    <script>
+        // Databáze slov na písmeno L
+        const words = [
+            'Láska', 'Les', 'Lampa', 'Lev', 'Letadlo', 
+            'Lano', 'Led', 'Lístek', 'Lodička', 'Lopata', 
+            'Lupen', 'Limonáda', 'Luk', 'Lepidlo', 'Loutka'
+        ];
+
+        // Paleta zářivých barev pro efekty
+        const colors = [
+            '#38bdf8', // světle modrá
+            '#fb7185', // růžová
+            '#a3e635', // limetková
+            '#facc15', // žlutá
+            '#c084fc', // fialová
+            '#2dd4bf', // teal
+            '#f472b6'  // světle růžová
+        ];
+
+        // Naslouchač události kliknutí na celou obrazovku
+        document.addEventListener('click', function(e) {
+            // Získání souřadnic kliknutí
+            const x = e.clientX;
+            const y = e.clientY;
+
+            // Výběr náhodného slova a náhodné barvy
+            const randomWord = words[Math.floor(Math.random() * words.length)];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            // 1. Vytvoření kruhu (ripple)
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            ripple.style.color = randomColor;
+
+            // 2. Vytvoření slova
+            const wordElement = document.createElement('div');
+            wordElement.className = 'word';
+            wordElement.style.left = `${x}px`;
+            wordElement.style.top = `${y}px`;
+            wordElement.style.color = randomColor;
+            wordElement.innerText = randomWord;
+
+            // Přidání elementů do DOMu (na obrazovku)
+            document.body.appendChild(ripple);
+            document.body.appendChild(wordElement);
+
+            // Odstranění obou elementů z DOMu přesně za 1 sekundu (1000 ms)
+            setTimeout(() => {
+                ripple.remove();
+                wordElement.remove();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
